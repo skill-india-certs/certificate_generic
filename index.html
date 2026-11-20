@@ -3,81 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Certificate of Participation - Skill India Digital Hub</title>
+  <title>certificate.pdf</title>
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    body {
-      background-color: #f4f6f8;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
+    html, body {
+      width: 100%;
+      min-height: 100dvh;
+      background-color: #47484c;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-    }
-    .viewer-container {
-      width: 100%;
-      max-width: 1000px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .toolbar {
-      width: 100%;
-      padding: 12px 20px;
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .toolbar-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1f2937;
-    }
-    .download-btn {
-      background-color: #2563eb;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 6px;
-    }
-    .download-btn:hover {
-      background-color: #1d4ed8;
     }
     #pdf-canvas {
       width: 100%;
       height: auto;
       display: block;
-    }
-    .loading {
-      padding: 60px 20px;
-      color: #6b7280;
-      font-size: 14px;
+      background-color: #ffffff;
     }
   </style>
 </head>
 <body>
-  <div class="viewer-container">
-    <div class="toolbar">
-      <span class="toolbar-title">Certificate of Participation</span>
-      <a class="download-btn" href="certificate.pdf" download="Abhinav_Sorte_Certificate.pdf">Download PDF</a>
-    </div>
-    <div id="loading" class="loading">Loading certificate...</div>
-    <canvas id="pdf-canvas"></canvas>
-  </div>
+  <canvas id="pdf-canvas"></canvas>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
@@ -85,22 +35,19 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-      return pdf.getPage(1);
-    }).then(page => {
-      const scale = 2.5;
-      const viewport = page.getViewport({ scale });
-      const canvas = document.getElementById('pdf-canvas');
-      const context = canvas.getContext('2d');
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+    pdfjsLib.getDocument(url).promise
+      .then(pdf => pdf.getPage(1))
+      .then(page => {
+        const scale = 3; // High resolution so pinch-to-zoom stays sharp
+        const viewport = page.getViewport({ scale });
+        const canvas = document.getElementById('pdf-canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
 
-      document.getElementById('loading').style.display = 'none';
-      page.render({ canvasContext: context, viewport });
-    }).catch(err => {
-      document.getElementById('loading').textContent = 'Unable to load certificate PDF.';
-      console.error(err);
-    });
+        return page.render({ canvasContext: context, viewport }).promise;
+      })
+      .catch(err => console.error(err));
   </script>
 </body>
 </html>
